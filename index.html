@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <style>
+        #map {
+            width: 100%;
+            height: 600px;
+            padding: 0;
+            margin: 0;
+        }
+
+        h1 {
+            margin-top: 15px;
+        }
+
+    </style>
+    <title></title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>San Diego Urban Heat Island</h1>
+        <p>
+            Map produced for the <a href="http://urbancanopy.io/tutorial">Urban
+                Heat Island Hackathon</a>, October 17-18 2020.
+            <a href="https://github.com/wykhuh/urban-heat-island">Github repo.</a>
+        </p>
+        <div id="map">
+        </div>
+    </div>
+
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    <script src="data/san_diego_boundary_datasd_0.js"></script>
+    <script src="data/TREECANOPY_METRIC_CPLAN_SD_2.js"></script>
+    <script src="data/parcels_10_hottest_3.js"></script>
+    <script src="data/parcels_10_coldest_4.js"></script>
+    <script src="data/block_grants_datasd_5.js"></script>
+    <script src="data/Parks_6.js"></script>
+    <script>
+        var map = L.map('map', {
+            zoomControl: true,
+            maxZoom: 18,
+            minZoom: 8,
+            layers: [
+                L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png",
+                    {
+                        attribution: 'Map tiles by <a href="https://carto.com/">Carto</a>, under CC BY 3.0. Data by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, under ODbL',
+                    })],
+        }).fitBounds([[32.53524661714286, -117.28196623791386], [33.11386837714286, -116.5462315118664]]);
+        var hash = new L.Hash(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+
+        function style_san_diego_boundary_datasd_0_0() {
+            return {
+                pane: 'pane_san_diego_boundary_datasd_0',
+                opacity: 1,
+                color: 'rgba(53,121,177,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fillOpacity: 0,
+                interactive: false,
+            }
+        }
+        map.createPane('pane_san_diego_boundary_datasd_0');
+        map.getPane('pane_san_diego_boundary_datasd_0').style.zIndex = 400;
+        map.getPane('pane_san_diego_boundary_datasd_0').style['mix-blend-mode'] = 'normal';
+        var layer_san_diego_boundary_datasd_0 = new L.geoJson(json_san_diego_boundary_datasd_0, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_san_diego_boundary_datasd_0',
+            layerName: 'layer_san_diego_boundary_datasd_0',
+            pane: 'pane_san_diego_boundary_datasd_0',
+            style: style_san_diego_boundary_datasd_0_0,
+        });
+        bounds_group.addLayer(layer_san_diego_boundary_datasd_0);
+        map.addLayer(layer_san_diego_boundary_datasd_0);
+
+        map.createPane('pane_Clipped_Raster_Temp_1');
+        map.getPane('pane_Clipped_Raster_Temp_1').style.zIndex = 401;
+        var img_Clipped_Raster_Temp_1 = 'data/Clipped_Raster_Temp_1.png';
+        var img_bounds_Clipped_Raster_Temp_1 = [[32.53524661714286, -117.28196623791386], [33.11386837714286, -116.5462315118664]];
+        var layer_Clipped_Raster_Temp_1 = new L.imageOverlay(img_Clipped_Raster_Temp_1,
+            img_bounds_Clipped_Raster_Temp_1,
+            { pane: 'pane_Clipped_Raster_Temp_1' });
+        bounds_group.addLayer(layer_Clipped_Raster_Temp_1);
+        map.addLayer(layer_Clipped_Raster_Temp_1);
+
+        function style_TREECANOPY_METRIC_CPLAN_SD_2_0(feature) {
+            if (feature.properties['TC_E_P'] >= 0.782035 && feature.properties['TC_E_P'] <= 9.031526) {
+                return {
+                    pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+                    opacity: 0.7,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: 'rgba(247,252,245,1.0)',
+                    interactive: false,
+                }
+            }
+            if (feature.properties['TC_E_P'] >= 9.031526 && feature.properties['TC_E_P'] <= 13.103186) {
+                return {
+                    pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+                    opacity: 0.7,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: 'rgba(202,234,195,1.0)',
+                    interactive: false,
+                }
+            }
+            if (feature.properties['TC_E_P'] >= 13.103186 && feature.properties['TC_E_P'] <= 16.570515) {
+                return {
+                    pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+                    opacity: 0.7,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: 'rgba(123,200,124,1.0)',
+                    interactive: false,
+                }
+            }
+            if (feature.properties['TC_E_P'] >= 16.570515 && feature.properties['TC_E_P'] <= 18.482882) {
+                return {
+                    pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+                    opacity: 0.7,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: 'rgba(42,146,74,1.0)',
+                    interactive: false,
+                }
+            }
+            if (feature.properties['TC_E_P'] >= 18.482882 && feature.properties['TC_E_P'] <= 26.563249) {
+                return {
+                    pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+                    opacity: 0.7,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0,
+                    fill: true,
+                    fillOpacity: 0.7,
+                    fillColor: 'rgba(0,68,27,1.0)',
+                    interactive: false,
+                }
+            }
+        }
+        map.createPane('pane_TREECANOPY_METRIC_CPLAN_SD_2');
+        map.getPane('pane_TREECANOPY_METRIC_CPLAN_SD_2').style.zIndex = 402;
+        map.getPane('pane_TREECANOPY_METRIC_CPLAN_SD_2').style['mix-blend-mode'] = 'normal';
+        var layer_TREECANOPY_METRIC_CPLAN_SD_2 = new L.geoJson(json_TREECANOPY_METRIC_CPLAN_SD_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_TREECANOPY_METRIC_CPLAN_SD_2',
+            layerName: 'layer_TREECANOPY_METRIC_CPLAN_SD_2',
+            pane: 'pane_TREECANOPY_METRIC_CPLAN_SD_2',
+            style: style_TREECANOPY_METRIC_CPLAN_SD_2_0,
+        });
+        bounds_group.addLayer(layer_TREECANOPY_METRIC_CPLAN_SD_2);
+
+        function style_parcels_10_hottest_3_0() {
+            return {
+                pane: 'pane_parcels_10_hottest_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,26,28,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_parcels_10_hottest_3');
+        map.getPane('pane_parcels_10_hottest_3').style.zIndex = 403;
+        map.getPane('pane_parcels_10_hottest_3').style['mix-blend-mode'] = 'normal';
+        var layer_parcels_10_hottest_3 = new L.geoJson(json_parcels_10_hottest_3, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_parcels_10_hottest_3',
+            layerName: 'layer_parcels_10_hottest_3',
+            pane: 'pane_parcels_10_hottest_3',
+            style: style_parcels_10_hottest_3_0,
+        });
+        bounds_group.addLayer(layer_parcels_10_hottest_3);
+
+        function style_parcels_10_coldest_4_0() {
+            return {
+                pane: 'pane_parcels_10_coldest_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(31,120,180,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_parcels_10_coldest_4');
+        map.getPane('pane_parcels_10_coldest_4').style.zIndex = 404;
+        map.getPane('pane_parcels_10_coldest_4').style['mix-blend-mode'] = 'normal';
+        var layer_parcels_10_coldest_4 = new L.geoJson(json_parcels_10_coldest_4, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_parcels_10_coldest_4',
+            layerName: 'layer_parcels_10_coldest_4',
+            pane: 'pane_parcels_10_coldest_4',
+            style: style_parcels_10_coldest_4_0,
+        });
+        bounds_group.addLayer(layer_parcels_10_coldest_4);
+
+        function style_block_grants_datasd_5_0() {
+            return {
+                pane: 'pane_block_grants_datasd_5',
+                opacity: 0.7,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.7,
+                fillColor: 'rgba(253,191,111,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_block_grants_datasd_5');
+        map.getPane('pane_block_grants_datasd_5').style.zIndex = 405;
+        map.getPane('pane_block_grants_datasd_5').style['mix-blend-mode'] = 'normal';
+        var layer_block_grants_datasd_5 = new L.geoJson(json_block_grants_datasd_5, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_block_grants_datasd_5',
+            layerName: 'layer_block_grants_datasd_5',
+            pane: 'pane_block_grants_datasd_5',
+            style: style_block_grants_datasd_5_0,
+        });
+        bounds_group.addLayer(layer_block_grants_datasd_5);
+
+        function style_Parks_6_0() {
+            return {
+                pane: 'pane_Parks_6',
+                opacity: 0.7,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 0.7,
+                fillColor: 'rgba(152,125,183,1.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Parks_6');
+        map.getPane('pane_Parks_6').style.zIndex = 406;
+        map.getPane('pane_Parks_6').style['mix-blend-mode'] = 'normal';
+        var layer_Parks_6 = new L.geoJson(json_Parks_6, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Parks_6',
+            layerName: 'layer_Parks_6',
+            pane: 'pane_Parks_6',
+            style: style_Parks_6_0,
+        });
+        bounds_group.addLayer(layer_Parks_6);
+
+        var baseMaps = {};
+        L.control.layers(baseMaps, {
+            '<img src="legend/Parks_6.png" /> Public Parks': layer_Parks_6,
+            '<img src="legend/block_grants_datasd_5.png" /> block_grants_datasd': layer_block_grants_datasd_5,
+            '<img src="legend/parcels_10_coldest_4.png" /> 10 Coldest Parcels': layer_parcels_10_coldest_4,
+            '<img src="legend/parcels_10_hottest_3.png" /> 10 Hottest Parcels': layer_parcels_10_hottest_3,
+            'Tree Canopy by Community<br /><table><tr><td style="text-align: center;"><img src="legend/TREECANOPY_METRIC_CPLAN_SD_2_0890.png" /></td><td>0.8 - 9 </td></tr><tr><td style="text-align: center;"><img src="legend/TREECANOPY_METRIC_CPLAN_SD_2_91311.png" /></td><td>9 - 13.1 </td></tr><tr><td style="text-align: center;"><img src="legend/TREECANOPY_METRIC_CPLAN_SD_2_1311662.png" /></td><td>13.1 - 16.6 </td></tr><tr><td style="text-align: center;"><img src="legend/TREECANOPY_METRIC_CPLAN_SD_2_1661853.png" /></td><td>16.6 - 18.5 </td></tr><tr><td style="text-align: center;"><img src="legend/TREECANOPY_METRIC_CPLAN_SD_2_1852664.png" /></td><td>18.5 - 26.6 </td></tr></table>': layer_TREECANOPY_METRIC_CPLAN_SD_2,
+            "Temperature": layer_Clipped_Raster_Temp_1,
+        }, { collapsed: true }).addTo(map);
+        setBounds();
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+    </script>
+</body>
+
+</html>
